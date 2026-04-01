@@ -1,0 +1,15 @@
+
+#hotColdPanel{
+  width:145px;
+  pointer-events:auto;
+}
+
+.last-hit-pulse { animation: lastHitPulse 0.9s ease-in-out infinite !important; }
+
+
+/* FORCE last-hit infinite (stops only when class is removed at spin start) */
+.last-hit-pulse,
+.number-square.last-hit-pulse {
+  animation: lastHitPulse 0.9s ease-in-out infinite !important;
+  animation-iteration-count: infinite !important;
+}

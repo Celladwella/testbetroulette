@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test Bet Roulette v26 - Drag & Drop Enabled</title>
+
+<style>
+/* Existing styles from your uploaded file (abbreviated for clarity) */
+body{margin:0; background:#000; color:#fff; font-family:sans-serif;}
+#felt{width:100%; height:600px; background:#111; display:grid; grid-template-columns:repeat(12, 1fr); position:relative;}
+.cell{width:60px; height:60px; background:#222; border:1px solid #444; display:flex; justify-content:center; align-items:center; position:relative;}
+.chip{width:30px; height:30px; border-radius:50%; background:red; cursor:grab; position:absolute; top:15px; left:15px; z-index:5;}
+.cell.drag-over{outline:2px dashed yellow;}
+</style>
+</head>
+<body>
+
+<div id="felt"></div>
+
+<script>
+// Build 3x12 grid
+const felt = document.getElementById('felt');
+const rows = 3;
+const cols = 12;
+const cells = [];
+for(let r=0;r<rows;r++){
+  for(let c=0;c<cols;c++){
+    const cell = document.createElement('div');
+    cell.classList.add('cell');
+    cell.dataset.row = r;
+    cell.dataset.col = c;
+    felt.appendChild(cell);
+    cells.push(cell);
+  }
+}
+
+// Randomly place 20 chips
+function placeChips(n){
+  const shuffled = cells.sort(()=>Math.random()-0.5);
+  for(let i=0;i<n;i++){
+    const chip = document.createElement('div');
+    chip.classList.add('chip');
+    shuffled[i].appendChild(chip);
+  }
+}
+placeChips(20);
+
+// Drag & Drop Logic
+let draggedChip = null;
+
+document.addEventListener('mousedown', e=>{
+  if(e.target.classList.contains('chip')){
+    draggedChip = e.target;
+    draggedChip.style.cursor = 'grabbing';
+    draggedChip.startX = e.clientX;
+    draggedChip.startY = e.clientY;
+    draggedChip.startParent = draggedChip.parentElement;
+    draggedChip.style.position = 'fixed';
+  }
+});
+
+document.addEventListener('mousemove', e=>{
+  if(draggedChip){
+    draggedChip.style.left = (e.clientX - 15)+'px';
+    draggedChip.style.top = (e.clientY - 15)+'px';
+  }
+});
+
+document.addEventListener('mouseup', e=>{
+  if(draggedChip){
+    const dropCell = document.elementFromPoint(e.clientX, e.clientY);
+    if(dropCell && dropCell.classList.contains('cell')){
+      dropCell.appendChild(draggedChip);
+      draggedChip.style.position = 'absolute';
+      draggedChip.style.left = '15px';
+      draggedChip.style.top = '15px';
+    } else {
+      draggedChip.startParent.appendChild(draggedChip);
+      draggedChip.style.position = 'absolute';
+      draggedChip.style.left = '15px';
+      draggedChip.style.top = '15px';
+    }
+    draggedChip.style.cursor = 'grab';
+    draggedChip = null;
+  }
+});
+</script>
+
+</body>
+</html>

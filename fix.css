@@ -1,0 +1,58 @@
+
+.number-cell{
+  position:relative;
+}
+.hit-count{
+  position:absolute;
+  left:3px;
+  bottom:4px;
+  font-size:11px;
+  opacity:0.85;
+  pointer-events:none;
+  color:#fff;
+}
+
+
+/* Prevent chip interaction during spin */
+body.chips-locked .chip,
+body.chips-locked .chip-stack,
+body.chips-locked #chipTray,
+body.chips-locked #rouletteTable,
+body.chips-locked svg {
+  cursor: not-allowed !important;
+}
+
+
+/* Last winning number highlight (yellow pulse + green outline) */
+@keyframes lastHitPulse {
+  0%   { filter: drop-shadow(0 0 0px rgba(255, 255, 0, 0.0)); }
+  40%  { filter: drop-shadow(0 0 10px rgba(255, 255, 0, 0.9)); }
+  100% { filter: drop-shadow(0 0 0px rgba(255, 255, 0, 0.0)); }
+}
+
+/* If squares are DIVs */
+.number-square.last-hit-pulse {
+  outline: 3px solid #33ff33;
+  animation: lastHitPulse 0.9s ease-in-out infinite;
+}
+
+/* If squares are SVG groups/rects with a class */
+.last-hit-pulse {
+  animation: lastHitPulse 0.9s ease-in-out 0s  infinite;
+}
+
+/* SVG rect outline (best-effort): give any rect inside the highlighted slot a green stroke */
+.last-hit-pulse rect,
+.last-hit-pulse path,
+.last-hit-pulse polygon {
+  stroke: #33ff33 !important;
+  stroke-width: 3px !important;
+}
+
+
+/* FORCE last-hit infinite (stops only when class is removed at spin start) */
+.last-hit-pulse,
+.number-square.last-hit-pulse {
+  animation: lastHitPulse 0.9s ease-in-out infinite !important;
+  animation-iteration-count: infinite !important;
+}

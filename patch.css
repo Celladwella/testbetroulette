@@ -1,0 +1,14 @@
+/* SOULMAN FIX: cursor + tight stacks */
+#bettingLayer, #bettingLayer * {
+  cursor: pointer !important;
+}
+
+.chip {
+  pointer-events: none !important;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.stack .chip {
+  margin-top: -4px !important;
+}
