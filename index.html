@@ -96,7 +96,7 @@
               html = html.replace(/<head([^>]*)>/i, '<head$1><base href="./">');
             }
             if(html.indexOf(SAVE_SCRIPT) === -1){
-              var tag = '\n<script src="' + SAVE_SCRIPT + '"><\\/script>\n';
+              var tag = '\n<script src="' + SAVE_SCRIPT + '"></scr' + 'ipt>\n';
               if(/<\/body>/i.test(html)) html = html.replace(/<\/body>/i, tag + '</body>');
               else html += tag;
             }
