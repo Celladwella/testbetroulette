@@ -1,0 +1,58 @@
+name: Apply named game saves
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/codex-apply-named-saves.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch-pages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Insert named save script tag
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          tag = '  <script src="named-game-saves.js"></script>\n'
+          marker = 'named-game-saves.js'
+          pages = [Path('index.html'), Path('roulette_v56_debug.html')]
+
+          for page in pages:
+              if not page.exists():
+                  print(f'{page}: missing, skipped')
+                  continue
+              text = page.read_text(encoding='utf-8')
+              if marker in text:
+                  print(f'{page}: already wired')
+                  continue
+              if '</body>' not in text:
+                  raise SystemExit(f'{page}: missing </body>')
+              page.write_text(text.replace('</body>', tag + '</body>', 1), encoding='utf-8')
+              print(f'{page}: wired')
+          PY
+
+      - name: Remove temporary patch workflow
+        run: rm -f .github/workflows/codex-apply-named-saves.yml
+
+      - name: Commit patched pages
+        run: |
+          git config user.name "codex"
+          git config user.email "codex@openai.com"
+          git add index.html roulette_v56_debug.html .github/workflows/codex-apply-named-saves.yml
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Wire named game saves into roulette pages"
+            git push
+          fi
